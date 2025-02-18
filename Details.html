@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue App</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body style="background-color: skyblue;">
+    <div id="app">
+        <h1>User Information</h1>
+        <p><strong>Name:</strong> {{ name }}</p>
+        <p><strong>Address:</strong> {{ address }}</p>
+        <label for="dobInput"><strong>Date of Birth:</strong></label>
+        <input type="date" id="dobInput" v-model="dob">
+        <p v-if="dob"><strong>Entered DOB:</strong> {{ dob }}</p>
+        <p v-if="age !== null"><strong>Age:</strong> {{ age }}</p>
+        <button @click="calculateAge">Calculate Age</button>
+        
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+        
+        createApp({
+            data() {
+                return {
+                    name: "Anushka",
+                    address: "Blb sec -3 , Haryana",
+                    dob: "",
+                    age: null,
+                };
+            },
+            methods: {
+                calculateAge() {
+                    if (!this.dob) return;
+                    const birthDate = new Date(this.dob);
+                    const today = new Date();
+                    let age = today.getFullYear() - birthDate.getFullYear();
+                    const monthDiff = today.getMonth() - birthDate.getMonth();
+                    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                        age--;
+                    }
+                    this.age = age;
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
