@@ -10,16 +10,22 @@ function focusInputField() {
     inputField.value.focus(); 
   }
 }
+
+function preventDirectFocus(event) {
+  event.preventDefault(); 
+}
+
 </script>
 
 <template>
   <div class="container">
-    <h1>My First Vue App :)</h1>
 
     <div class="input-group">
-      <label @click="focusInputField">Enter Theme :</label>
-      <input type="text" v-model="themes" placeholder="Enter theme (e.g. sales)" ref="inputField"/>
+      <button @click="focusInputField"><label>Enter Theme :</label></button>
+      <input type="text" v-model="themes" placeholder="Enter theme (e.g. sales)" ref="inputField"  @mousedown="preventDirectFocus"/>
     </div>
+
+    <h1>My First Vue App :)</h1>
 
     <ModalProject 
       modalTitle="Sign up for the Giveaway!"
@@ -40,13 +46,13 @@ function focusInputField() {
 }
 
 
-.input-group {
+/* .input-group {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-bottom: 15px;
   width: 100%;
-}
+} */
 
 label {
   color: black;
@@ -65,6 +71,8 @@ input {
   border-bottom: 2px solid;
   font-weight: 600;
   font-size: 1rem;
+  margin-top: 20px;
+
 }
 
 
