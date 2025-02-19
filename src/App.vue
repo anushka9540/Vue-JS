@@ -1,25 +1,85 @@
-<template>
-  <UserInformation/>
-</template>
+<script setup>
+import { ref } from 'vue';
+import ModalProject from './components/ModalProject.vue';
 
-<script>
-import UserInformation from './components/UserInformation.vue';
+const themes = ref('');
+const inputField = ref(null);
 
-export default {
-  name: 'App',
-  components: {
-    UserInformation
+function focusInputField() {
+  if (inputField.value) {
+    inputField.value.focus(); 
   }
 }
 </script>
 
+<template>
+  <div class="container">
+    <h1>My First Vue App :)</h1>
+
+    <div class="input-group">
+      <label @click="focusInputField">Enter Theme :</label>
+      <input type="text" v-model="themes" placeholder="Enter theme (e.g. sales)" ref="inputField"/>
+    </div>
+
+    <ModalProject 
+      modalTitle="Sign up for the Giveaway!"
+      modalContent="Grab your ninja swag for half price!"
+      :theme="themes"
+    />
+  </div>
+</template>
+
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  padding: 20px;
+}
+
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+label {
+  color: black;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+
+input {
+  width: 80%;
+  max-width: 300px;
+  padding: 8px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+
+body {
+  background-color: rgb(105, 180, 183);
+  margin: 0;
+}
+ 
+@media screen and (max-width: 600px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+  input {
+    font-size: 0.9rem;
+    max-width: 250px;
+  }
 }
 </style>
