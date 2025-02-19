@@ -6,11 +6,14 @@
       <label for="dob">Enter Date of Birth:</label>
       <input type="date" v-model="dob" id="dob" />
       <button @click="calculateAge">Calculate Age</button>
-      <p v-if="age !== null">Age: {{ age }}</p>
 
-      <p v-if="age !== null" :class="age < 18 ? 'error' : 'success'" class="agetext">
-      {{ age < 18 ? 'You are under age' : 'You are OK to use the website' }}
-       </p>
+       <section v-if="age !== null">
+            <p>Age: {{ age }}</p>
+
+            <p :class="age < 18 ? 'error' : 'success'" class="agetext">
+            {{ age < 18 ? 'You are under age' : 'You are OK to use the website' }}
+            </p>
+       </section>
       
       <h2>Users List</h2>
       <ul>
