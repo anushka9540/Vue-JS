@@ -4,6 +4,7 @@ import ModalProject from './components/ModalProject.vue';
 
 const themes = ref('');
 const inputField = ref(null);
+const showModal = ref(false);
 
 function focusInputField() {
   if (inputField.value) {
@@ -15,44 +16,70 @@ function preventDirectFocus(event) {
   event.preventDefault(); 
 }
 
+function openModal() {
+  showModal.value = true;
+}
+
+function closeModal() {
+  showModal.value = false;
+}
 </script>
 
 <template>
-  <div class="container">
+  <div class="app-wrapper">
+    <div class="app-container" :class="{ 'blur-background': showModal }">
+      <div class="input-group">
+        <button @click="focusInputField"><label>Focus</label></button>
+        <input 
+          type="text" 
+          v-model="themes" 
+          placeholder="Enter theme (e.g. sales)" 
+          ref="inputField"  
+          @mousedown="preventDirectFocus"
+        />
+      </div>
 
-    <div class="input-group">
-      <button @click="focusInputField"><label>Enter Theme :</label></button>
-      <input type="text" v-model="themes" placeholder="Enter theme (e.g. sales)" ref="inputField"  @mousedown="preventDirectFocus"/>
+      <h1>My First Vue App :)</h1>
+
+      <button @click="openModal" class="open-modal">Open Modal</button>
     </div>
 
-    <h1>My First Vue App :)</h1>
-
     <ModalProject 
+      v-if="showModal"
       modalTitle="Sign up for the Giveaway!"
       modalContent="Grab your ninja swag for half price!"
       :theme="themes"
+      @close="closeModal"
     />
   </div>
 </template>
 
 <style>
-.container {
+.app-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.app-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   padding: 20px;
+  width: 100%;
+  height: 100%;
+  transition: filter 0.3s ease-in-out;
 }
 
-
-/* .input-group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 15px;
-  width: 100%;
-} */
+.blur-background {
+  filter: blur(5px);
+}
 
 label {
   color: black;
@@ -72,15 +99,27 @@ input {
   font-weight: 600;
   font-size: 1rem;
   margin-top: 20px;
-
 }
 
+h1 {
+  color: #000000cf;
+}
 
 body {
-  background-color: rgb(105, 180, 183);
+  background-color: rgb(213, 217, 217);
   margin: 0;
 }
- 
+
+.open-modal {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 @media screen and (max-width: 600px) {
   h1 {
     font-size: 1.5rem;
