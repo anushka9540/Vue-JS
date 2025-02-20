@@ -1,58 +1,65 @@
-<script setup>
-import { ref } from 'vue';
-import ModalProject from './components/ModalProject.vue';
-
-const themes = ref('');
-const inputField = ref(null);
-const showModal = ref(false);
-
-function focusInputField() {
-  if (inputField.value) {
-    inputField.value.focus(); 
-  }
-}
-
-function preventDirectFocus(event) {
-  event.preventDefault(); 
-}
-
-function openModal() {
-  showModal.value = true;
-}
-
-function closeModal() {
-  showModal.value = false;
-}
-</script>
-
 <template>
   <div class="app-wrapper">
     <div class="app-container" :class="{ 'blur-background': showModal }">
       <div class="input-group">
-        <button @click="focusInputField"><label>Focus</label></button>
+        <button v-on:click="focusInputField"><label>Focus</label></button>
         <input 
           type="text" 
-          v-model="themes" 
+          v-model="theme" 
           placeholder="Enter theme (e.g. sales)" 
           ref="inputField"  
-          @mousedown="preventDirectFocus"
+          v-on:mousedown="preventDirectFocus"
         />
       </div>
 
       <h1>My First Vue App :)</h1>
 
-      <button @click="openModal" class="open-modal">Open Modal</button>
+      <button v-on:click="openModal" class="open-modal">Open Modal</button>
     </div>
 
     <ModalProject 
       v-if="showModal"
-      modalTitle="Sign up for the Giveaway!"
-      modalContent="Grab your ninja swag for half price!"
-      :theme="themes"
-      @close="closeModal"
+      :modalTitle="'Sign up for the Giveaway!'"
+      :modalContent="'Grab your ninja swag for half price!'"
+      :theme="theme"
+      v-on:close="closeModal"
     />
   </div>
 </template>
+
+<script>
+import ModalProject from './components/ModalProject.vue';
+
+export default {
+  name:'App',
+  components: {
+    ModalProject
+  },
+  data() {
+    return {
+      theme: '',
+      inputField: null,
+      showModal: false
+    };
+  },
+  methods: {
+    focusInputField() {
+      if (this.$refs.inputField) {
+        this.$refs.inputField.focus();
+      }
+    },
+    preventDirectFocus(event) {
+      event.preventDefault();
+    },
+    openModal() {
+      this.showModal = true;
+    },
+    closeModal() {
+      this.showModal = false;
+    }
+  }
+};
+</script>
 
 <style>
 .app-wrapper {

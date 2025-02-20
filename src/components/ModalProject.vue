@@ -1,5 +1,5 @@
 <template>
-    <div class="modal-overlay" @click.self="$emit('close')">
+    <div class="modal-overlay" v-on:click="closeModal">
       <div class="modal-box" :class="themeClass">
         <div class="modal-header">
           <h2>{{ modalTitle }}</h2>
@@ -11,20 +11,27 @@
     </div>
   </template>
   
-  <script setup>
-  import { computed } from 'vue';
-  
-  const props = defineProps({
-    modalTitle: String,
-    modalContent: String,
-    theme: String
-  });
-  
-  const themeClass = computed(() => {
-    return props.theme === 'sales' ? 'sales-theme' : 'default-theme';
-  });
+  <script>
+  export default {
+    name:'ModalProject',
+    props: {
+      modalTitle: String,
+      modalContent: String,
+      theme: String
+    },
+    computed: {
+      themeClass() {
+        return this.theme === 'sales' ? 'sales-theme' : 'default-theme';
+      }
+    },
+    methods: {
+      closeModal() {
+        this.$emit('close');
+      }
+    }
+  };
   </script>
-  
+
   <style scoped>
   .modal-overlay {
     position: fixed;
@@ -82,4 +89,3 @@
     }
   }
   </style>
-  
