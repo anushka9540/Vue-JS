@@ -27,15 +27,8 @@
     },
     computed: {
       themeClass() {
-        
-          if (this.theme === 'sales' || this.theme === 'SALES') {
-              return 'sales-theme';
-          }
-          else{
-            return 'default-theme';
-          }
-        }
-      
+        return this.theme.toLowerCase() === 'sales' ? 'sales-theme' : 'default-theme';
+      }
     },
     methods: {
     handleOverlayClick(event) {

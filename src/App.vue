@@ -75,6 +75,10 @@ export default {
   flex-direction: column;
 }
 
+button{
+  background-color: white;
+}
+
 .app-container {
   display: flex;
   flex-direction: column;
@@ -109,6 +113,7 @@ input {
   font-weight: 600;
   font-size: 1rem;
   margin-top: 20px;
+  color: black;
 }
 
 h1 {
