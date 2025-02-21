@@ -23,7 +23,16 @@
       :modalContent="'Grab your ninja swag for half price!'"
       :theme="theme"
       v-on:close="closeModal"
-    />
+    >
+
+      <p>Enjoy exclusive deals and offers by signing up today!</p>
+
+
+      <template v-slot:links>
+        <a href="#" class="modal-link">Learn More</a>
+        <a href="#" class="modal-link">Sign Up</a>
+      </template>
+    </ModalProject>
   </div>
 </template>
 
@@ -125,6 +134,22 @@ body {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.modal-link {
+  display: inline-block;
+  margin: 10px;
+  padding: 8px 15px;
+  text-decoration: none;
+  color: white;
+  background-color: #007bff;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: 0.3s ease;
+}
+
+.modal-link:hover {
+  background-color: #0056b3;
 }
 
 @media screen and (max-width: 600px) {

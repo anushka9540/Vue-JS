@@ -6,6 +6,12 @@
         </div>
         <div class="modal-body">
           <p>{{ modalContent }}</p>
+
+          <slot></slot>
+          <div class="modal-footer">
+            <slot name="links"></slot>
+          </div>
+
         </div>
       </div>
     </div>
@@ -57,6 +63,13 @@
     background: white;
     z-index: 10;
   }
+
+  .modal-footer {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
   
   .default-theme {
     background-color: #ffffff;
