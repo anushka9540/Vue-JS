@@ -27,8 +27,15 @@
     },
     computed: {
       themeClass() {
-        return this.theme === 'sales' ? 'sales-theme' : 'default-theme';
-      }
+        
+          if (this.theme === 'sales' || this.theme === 'SALES') {
+              return 'sales-theme';
+          }
+          else{
+            return 'default-theme';
+          }
+        }
+      
     },
     methods: {
     handleOverlayClick(event) {

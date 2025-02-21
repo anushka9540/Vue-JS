@@ -18,8 +18,8 @@
 
     <ModalProject 
       v-if="showModal"
-      :modalTitle="'Sign up for the Giveaway!'"
-      :modalContent="'Grab your ninja swag for half price!'"
+      modalTitle="Sign up for the Giveaway!"
+      modalContent="Grab your ninja swag for half price!"
       :theme="theme"
       v-on:close="toggleModal"
     >
