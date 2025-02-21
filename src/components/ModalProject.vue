@@ -31,12 +31,12 @@
       }
     },
     methods: {
-    handleOverlayClick(event) {
-      if (event.target.classList.contains('modal-overlay')) {
-        this.$emit('close');
-      }
+      handleOverlayClick(event) {
+        if (event.currentTarget === event.target) {
+          this.$emit('close');
+          }
+        }
     }
-  }
   };
   </script>
 
