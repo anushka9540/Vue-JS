@@ -1,6 +1,6 @@
 <template>
-    <div class="modal-overlay" v-on:click="closeModal">
-      <div class="modal-box" :class="themeClass">
+    <div class="modal-overlay" v-on:click="handleOverlayClick">
+      <div class="modal-box" :class="themeClass" v-on:click.stop>
         <div class="modal-header">
           <h2>{{ modalTitle }}</h2>
         </div>
@@ -31,10 +31,12 @@
       }
     },
     methods: {
-      closeModal() {
+    handleOverlayClick(event) {
+      if (event.target.classList.contains('modal-overlay')) {
         this.$emit('close');
       }
     }
+  }
   };
   </script>
 

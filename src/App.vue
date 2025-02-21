@@ -1,5 +1,5 @@
 <template>
-  <div class="app-wrapper">
+  <div class="app-wrapper" >
     <div class="app-container" :class="{ 'blur-background': showModal }">
       <div class="input-group">
         <button v-on:click="focusInputField"><label>Focus</label></button>
@@ -8,13 +8,12 @@
           v-model="theme" 
           placeholder="Enter theme (e.g. sales)" 
           ref="inputField"  
-          v-on:mousedown="preventDirectFocus"
         />
       </div>
 
       <h1>My First Vue App :)</h1>
 
-      <button v-on:click="openModal" class="open-modal">Open Modal</button>
+      <button v-on:click="toggleModal" class="open-modal">Open Modal</button>
     </div>
 
     <ModalProject 
@@ -22,7 +21,7 @@
       :modalTitle="'Sign up for the Giveaway!'"
       :modalContent="'Grab your ninja swag for half price!'"
       :theme="theme"
-      v-on:close="closeModal"
+      v-on:close="toggleModal"
     >
 
       <p>Enjoy exclusive deals and offers by signing up today!</p>
@@ -33,6 +32,7 @@
         <a href="#" class="modal-link">Sign Up</a>
       </template>
     </ModalProject>
+    
   </div>
 </template>
 
@@ -57,14 +57,8 @@ export default {
         this.$refs.inputField.focus();
       }
     },
-    preventDirectFocus(event) {
-      event.preventDefault();
-    },
-    openModal() {
-      this.showModal = true;
-    },
-    closeModal() {
-      this.showModal = false;
+    toggleModal() {
+      this.showModal = !this.showModal;
     }
   }
 };
