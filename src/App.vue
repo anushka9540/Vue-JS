@@ -21,7 +21,7 @@
       modalTitle="Sign up for the Giveaway!"
       modalContent="Grab your ninja swag for half price!"
       :theme="theme"
-      :closeModal="toggleModal"
+      v-on:close="toggleModal"
     >
 
       <p>Enjoy exclusive deals and offers by signing up today!</p>

@@ -1,5 +1,5 @@
 <template>
-    <div class="modal-overlay" ref="modalOverlay" v-on:click="handleOverlayClick">
+    <div class="modal-overlay" v-on:click="$emit('close')">
       <div class="modal-box" :class="themeClass" v-on:click.stop>
         <div class="modal-header">
           <h2>{{ modalTitle }}</h2>
@@ -24,20 +24,12 @@
       modalTitle: String,
       modalContent: String,
       theme: String, 
-      closeModal: Function
     },
     computed: {
       themeClass() {
         return this.theme.toLowerCase() === 'sales' ? 'sales-theme' : 'default-theme';
       }
     },
-    methods: {
-      handleOverlayClick(event) {
-          if(event.target === this.$refs.modalOverlay){
-            this.closeModal();
-          }
-        }
-    }
   };
   </script>
 
