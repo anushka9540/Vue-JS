@@ -1,19 +1,30 @@
 <template>
   <div class="canvas" :class="{ 'active': readyToStop }">
-    <h2>Reaction Time Game</h2>
+    <h1>Reaction Time Game</h1>
     <GameButton 
       :gameStarted="gameStarted"
-      @button-click="handleButtonClick"
+      @btn-text-changed="handleButtonClick"
     />
 
     <div class="result">
       <GameResult
         :gameStarted="gameStarted"
-        :readyToStop="readyToStop"
-        :errorMessage="resultMessage"
-        :reactionTime="reactionTime"
-        :highScore="highScore"
       />
+       
+      <span v-if="reactionTime && !modalVisible" class="span-result">
+        Your reaction time was {{ rawReactionTime }}.
+      </span>
+
+      <span v-if="highScore" class="high-score">High Score: {{ highScore }}</span>
+
+      <div v-if="modalVisible" class="modal">
+        <div class="modal-content">
+          <h3>Reaction Time Result</h3>
+          <p>Your reaction time was <strong>{{ reactionTime }}</strong></p>
+          <p v-if="highScore">High Score : <strong>{{ highScore }}</strong></p>
+          <button v-on:click="closeModal">OK</button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -30,12 +41,12 @@ export default {
       gameStarted: false,
       readyToStop: false,
       startTime: null, 
-      counterInterval: null,
       reactionTime: null,
+      rawReactionTime: null,
       highScore: null, 
       timer: null,
-      resultMessage: "",
-      reactionDelay: 3000 
+      reactionDelay: 5000,
+      modalVisible: false, 
     };
   },
   methods: {
@@ -49,39 +60,46 @@ export default {
     startGame() {
       this.gameStarted = true;
       this.reactionTime = null;
+      this.rawReactionTime = null; 
       this.resultMessage = "";
       this.readyToStop = false;
-      this.counter = 0;
+      this.startTime = null; 
 
       this.timer = setTimeout(() => {
         this.readyToStop = true;
-        this.counterInterval = setInterval(() => {
-          this.counter++; 
-        }, 1);
+        this.startTime = Date.now(); 
       }, this.reactionDelay);
     },
     stopGame() {
-      if (!this.readyToStop) {
-        this.resultMessage = "Too soon!";
+      if (!this.readyToStop || !this.startTime) {
         this.reactionTime = null;
+        this.rawReactionTime = null;
         this.gameStarted = false;
         clearTimeout(this.timer);
         return;
       }
 
-      clearInterval(this.counterInterval); 
+      const endTime = Date.now();
+      this.rawReactionTime = endTime - this.startTime;
 
-      let seconds = Math.floor(this.counter / 1000);
-      let milliseconds = this.counter % 1000;
+      let seconds = Math.floor(this.rawReactionTime / 1000);
+      let milliseconds = this.rawReactionTime % 1000;
 
-      this.reactionTime = seconds + "." + (milliseconds < 100 ? (milliseconds < 10 ? "00" : "0") : "") + milliseconds + "s";
+      this.reactionTime = `${seconds}.${milliseconds.toString().padStart(3, '0')}s`;
       
+      this.rawReactionTime = this.reactionTime;
+
       this.gameStarted = false;
       this.readyToStop = false;
 
       if (this.highScore === null || this.reactionTime < this.highScore) {
         this.highScore = this.reactionTime;
       }
+
+      this.modalVisible = true;
+    },
+    closeModal() {
+      this.modalVisible = false;
     }
   }
 };
@@ -90,76 +108,74 @@ export default {
 
 <style>
   body {
-    background: linear-gradient(to right, #74ebd5, #9face6);
+    background-color: skyblue;
     margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    font-family: 'Arial', sans-serif;
+    
   }
 
-  h2{
-      color: #910a4b;
+  h1{
+      color: rgb(145, 10, 75);
       font-weight: 900;
-      font-size: 2rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
-      text-align: center;
   }
 
   .canvas {
-    border: 4px solid #333;
-    border-radius: 25px;
-    height: 70vh;
-    width: 90vw;
-    max-width: 800px;
+    margin-left: 0;
+    height: 100vh;
+    width: 100vw;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
-    background-color: #ffffff;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    padding: 20px;
-    transition: background-color 0.3s ease, transform 0.2s;
+    transition: background-color 0.3s ease;
   }
   .canvas.active {
-    background-color: #d162d1;
-    transform: scale(1.02);
+    background-color:  rgb(208, 97, 210);
   }
-  @media (max-width: 600px) {
-  .canvas {
-    height: 85vh;
-    width: 95vw;
-    padding: 10px;
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
-
-  h2 {
-    font-size: 1.6rem;
-  }
-
-  .action-btn {
-    width: 90%;
-    height: 55px;
-    font-size: 1.4rem;
-  }
-
-  .result {
-    font-size: 1.2rem;
-    width: 90%;
-  }
-
   .modal-content {
-    width: 80%;
-    font-size: 1rem;
-    padding: 5px;
-    margin-right: 55px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+  .modal-content button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    background: rgb(30, 196, 30);
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .high-score {
+    display: block;
+    margin-top: 10px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: darkblue;
   }
 
-  .modal-content button {
-    font-size: 1rem;
-    padding: 10px 18px;
+  @media (max-width: 600px) {
+    .action-btn {
+      font-size: 1.2rem;
+    }
+    .result {
+      font-size: 0.9rem;
+    }
   }
-}
 </style>
