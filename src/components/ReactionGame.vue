@@ -61,7 +61,6 @@ export default {
       this.gameStarted = true;
       this.reactionTime = null;
       this.rawReactionTime = null; 
-      this.resultMessage = "";
       this.readyToStop = false;
       this.startTime = null; 
 
