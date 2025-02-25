@@ -1,14 +1,19 @@
 <template>
   <div class="canvas" :class="{ 'active': readyToStop }">
     <h2>Reaction Time Game</h2>
-    <button v-if="!gameStarted" v-on:click="startGame" class="action-btn go">Go</button>
-    <button v-if="gameStarted" v-on:click="stopGame" class="action-btn stop">Stop</button>
+    <button 
+      @click="handleButtonClick"
+      :class="gameStarted ? 'stop' : 'go'"
+      class="action-btn"
+    >
+      {{ gameStarted ? 'Stop' : 'Go' }}
+    </button>
 
     <div class="result">
       <GameResult
         :gameStarted="gameStarted"
         :readyToStop="readyToStop"
-        :errorMessage="errorMessage"
+        :errorMessage="resultMessage"
         :reactionTime="reactionTime"
         :highScore="highScore"
       />
@@ -28,47 +33,52 @@ export default {
       readyToStop: false,
       startTime: 0,
       reactionTime: null,
-      highScore: null, // Store the best reaction time
-      errorMessage: "",
-      timer: null
+      highScore: null, 
+      timer: null,
+      resultMessage: "",
+      reactionDelay: 3000 
     };
   },
   methods: {
+    handleButtonClick() {
+      if (!this.gameStarted) {
+        this.startGame();
+      } else {
+        this.stopGame();
+      }
+    },
     startGame() {
       this.gameStarted = true;
       this.reactionTime = null;
-      this.errorMessage = "";
+      this.resultMessage = "";
       this.readyToStop = false;
-
-      const delay = Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000;
 
       this.timer = setTimeout(() => {
         this.readyToStop = true;
         this.startTime = performance.now();
-      }, delay);
+      }, this.reactionDelay);
     },
     stopGame() {
       if (!this.readyToStop) {
-        this.errorMessage = "Too soon! Wait for the signal.";
+        this.resultMessage = "Too soon!";
+        this.reactionTime = null;
         this.gameStarted = false;
         clearTimeout(this.timer);
         return;
       }
 
       const currentReactionTime = Math.round(performance.now() - this.startTime);
-
-      this.reactionTime = `${currentReactionTime} ms`;
+      this.reactionTime = currentReactionTime;
       this.gameStarted = false;
       this.readyToStop = false;
 
       if (this.highScore === null || currentReactionTime < parseInt(this.highScore)) {
-        this.highScore = `${currentReactionTime} ms`;
+        this.highScore = currentReactionTime;
       }
     }
   }
 };
 </script>
-
 
 <style>
   body {
