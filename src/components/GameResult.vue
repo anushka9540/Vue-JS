@@ -57,29 +57,73 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 10px;
   }
   .modal-content {
     background: white;
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 15px;
     text-align: center;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 400px;
+    font-size: 1.2rem;
   }
+.modal-content h3 {
+  font-size: 1.6rem;
+  color: #444;
+}
+
+.modal-content p {
+  font-size: 1rem;
+  margin: 10px 0;
+}
   .modal-content button {
-    margin-top: 10px;
-    padding: 10px 20px;
+    margin-top: 15px;
+    padding: 12px 20px;
     border: none;
-    background: rgb(30, 196, 30);
+    background: #28a745;
     color: white;
-    border-radius: 5px;
+    font-size: 1rem;
+    border-radius: 8px;
     cursor: pointer;
+    transition: 0.3s;
   }
   .high-score {
     display: block;
     margin-top: 10px;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     font-weight: bold;
     color: darkblue;
+  }
+
+  .result {
+    height: auto;
+    width: 85%;
+    max-width: 450px;
+    color: black;
+    border: 2px solid #444;
+    border-radius: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    text-align: center;
+    background-color: aliceblue;
+    padding: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  }
+  .modal-content button:hover {
+  background: #218838;
+}
+  .span-result {
+    font-weight: bold;
+  }
+  .error {
+    color: red;
+    font-weight: bold;
+    font-size: 1.3rem;
   }
   </style>
   

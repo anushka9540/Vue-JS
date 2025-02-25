@@ -1,13 +1,10 @@
 <template>
   <div class="canvas" :class="{ 'active': readyToStop }">
     <h2>Reaction Time Game</h2>
-    <button 
-      @click="handleButtonClick"
-      :class="gameStarted ? 'stop' : 'go'"
-      class="action-btn"
-    >
-      {{ gameStarted ? 'Stop' : 'Go' }}
-    </button>
+    <GameButton 
+      :gameStarted="gameStarted"
+      @button-click="handleButtonClick"
+    />
 
     <div class="result">
       <GameResult
@@ -22,16 +19,18 @@
 </template>
 
 <script>
+import GameButton from './GameButton.vue';
 import GameResult from "./GameResult.vue";
 
 export default {
-  components: { GameResult },
+  components: { GameResult, GameButton },
   name: "ReactionGame",
   data() {
     return {
       gameStarted: false,
       readyToStop: false,
-      startTime: 0,
+      startTime: null, 
+      counterInterval: null,
       reactionTime: null,
       highScore: null, 
       timer: null,
@@ -52,10 +51,13 @@ export default {
       this.reactionTime = null;
       this.resultMessage = "";
       this.readyToStop = false;
+      this.counter = 0;
 
       this.timer = setTimeout(() => {
         this.readyToStop = true;
-        this.startTime = performance.now();
+        this.counterInterval = setInterval(() => {
+          this.counter++; 
+        }, 1);
       }, this.reactionDelay);
     },
     stopGame() {
@@ -67,97 +69,97 @@ export default {
         return;
       }
 
-      const currentReactionTime = Math.round(performance.now() - this.startTime);
-      this.reactionTime = currentReactionTime;
+      clearInterval(this.counterInterval); 
+
+      let seconds = Math.floor(this.counter / 1000);
+      let milliseconds = this.counter % 1000;
+
+      this.reactionTime = seconds + "." + (milliseconds < 100 ? (milliseconds < 10 ? "00" : "0") : "") + milliseconds + "s";
+      
       this.gameStarted = false;
       this.readyToStop = false;
 
-      if (this.highScore === null || currentReactionTime < parseInt(this.highScore)) {
-        this.highScore = currentReactionTime;
+      if (this.highScore === null || this.reactionTime < this.highScore) {
+        this.highScore = this.reactionTime;
       }
     }
   }
 };
 </script>
 
+
 <style>
   body {
-    background: #ffffff;
+    background: linear-gradient(to right, #74ebd5, #9face6);
     margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+    font-family: 'Arial', sans-serif;
   }
 
   h2{
-      color: rgb(145, 10, 75);
+      color: #910a4b;
       font-weight: 900;
+      font-size: 2rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+      text-align: center;
   }
 
   .canvas {
-    border: 2px solid black;
-    border-radius: 20px;
-    height: 60vh;
+    border: 4px solid #333;
+    border-radius: 25px;
+    height: 70vh;
     width: 90vw;
-    max-width: 700px;
+    max-width: 800px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
-    background-color: skyblue;
-    transition: background-color 0.3s ease;
+    background-color: #ffffff;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    transition: background-color 0.3s ease, transform 0.2s;
   }
   .canvas.active {
-    background-color:  rgb(208, 97, 210);
-  }
-  .action-btn {
-    height: 15%;
-    width: 80%;
-    max-width: 400px;
-    border: none;
-    font-size: 1.5rem;
-    border-radius: 20px;
-    color: white;
-  }
-  .go {
-    background-color: rgb(30, 196, 30);
-  }
-  .stop {
-    background-color: rgb(226, 19, 19);
-  }
-  .result {
-    height: 25%;
-    width: 80%;
-    max-width: 400px;
-    color: black;
-    border: 1px solid;
-    border-radius: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    text-align: center;
-    background-color: aliceblue;
-    padding: 10px;
-  }
-  .span-result {
-    font-weight: bold;
-  }
-  .error {
-    color: red;
-    font-weight: bold;
+    background-color: #d162d1;
+    transform: scale(1.02);
   }
   @media (max-width: 600px) {
-    .canvas {
-      height: 70vh;
-    }
-    .action-btn {
-      font-size: 1.2rem;
-    }
-    .result {
-      font-size: 0.9rem;
-    }
+  .canvas {
+    height: 85vh;
+    width: 95vw;
+    padding: 10px;
   }
+
+  h2 {
+    font-size: 1.6rem;
+  }
+
+  .action-btn {
+    width: 90%;
+    height: 55px;
+    font-size: 1.4rem;
+  }
+
+  .result {
+    font-size: 1.2rem;
+    width: 90%;
+  }
+
+  .modal-content {
+    width: 80%;
+    font-size: 1rem;
+    padding: 5px;
+    margin-right: 55px;
+  }
+
+  .modal-content button {
+    font-size: 1rem;
+    padding: 10px 18px;
+  }
+}
 </style>
