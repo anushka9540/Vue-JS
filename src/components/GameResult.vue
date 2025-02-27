@@ -1,23 +1,32 @@
 <template>
-    <div>
+   <div>
         <span>
             {{ gameStarted ? "Pay attention. Click stop when the color changes." : "Click Go to test your reaction time!" }}
         </span>
         <br>
-        <span v-if="tooSoonMessage">{{ tooSoonMessage }}</span>
-    
-        <span v-else-if="reactionTime && !modalVisible" class="span-result">
-            Your reaction time was {{ reactionTime }}.
-        </span>
-    
-        <span v-if="highScore" class="high-score">High Score: {{ highScore }}</span>
+        <span>{{ displayMessage }}</span>
+        <span v-if="showHighScore" class="high-score">High Score: {{ highScore }}s</span>
     </div>
 </template>
 
 <script>
 export default {
   name: 'GameResult',
-  props: ['gameStarted', 'reactionTime', 'highScore', 'tooSoonMessage', 'modalVisible']
+  props: ['gameStarted', 'reactionTime', 'highScore', 'tooSoonMessage'],
+  computed: {
+    displayMessage() {
+      if (this.tooSoonMessage) {
+        return this.tooSoonMessage;
+      }
+      if (this.reactionTime) {
+        return `Your reaction time was ${this.reactionTime}s.`;
+      }
+      return "";
+    },
+    showHighScore() {
+      return this.highScore && !this.tooSoonMessage;
+    }
+  }
 };
 </script>
 
@@ -43,3 +52,7 @@ export default {
     font-weight: bold;
 }
 </style>
+
+
+
+

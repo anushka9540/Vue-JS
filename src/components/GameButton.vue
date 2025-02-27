@@ -1,5 +1,5 @@
 <template>
-    <button @click="$emit('btn-text-changed')" :class="gameStarted ? 'stop' : 'go'" class="action-btn">
+    <button @click="$emit('click-btn')" :class="gameStarted ? 'stop' : 'go'" class="action-btn">
         {{ gameStarted ? 'Stop' : 'Go' }}
     </button>
 </template>

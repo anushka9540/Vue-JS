@@ -1,13 +1,17 @@
 <template>
-  <div class="canvas" :class="{ 'active': readyToStop }">
+   <div class="canvas" :class="{ 'active': startTime !== null }">
     <h1>Reaction Time Game</h1>
-    <GameButton :gameStarted="gameStarted" @btn-text-changed="btnTextChange" />
+    <GameButton :gameStarted="gameStarted" v-on:click="toggleGameState()" />
   
     <div class="result">
-      <GameResult :gameStarted="gameStarted" :reactionTime="reactionTime ? reactionTime + 's' : null"
-        :highScore="highScore ? highScore + 's' : null" :tooSoonMessage="tooSoonMessage" :modalVisible="modalVisible" />
+      <GameResult 
+        :gameStarted="gameStarted" 
+        :reactionTime="reactionTime || null"
+        :highScore="highScore || null" 
+        :tooSoonMessage="tooSoonMessage"
+      />
   
-      <div v-if="modalVisible" class="modal">
+      <div v-if="reactionTime" class="modal">
         <div class="modal-content">
           <h3>Reaction Time Result</h3>
           <p>Your reaction time was <strong>{{ reactionTime }}s</strong></p>
@@ -29,38 +33,29 @@ export default {
   data() {
     return {
       gameStarted: false,
-      readyToStop: false,
       startTime: null,
       reactionTime: null,
       highScore: null,
       reactionTimer: null,
-      reactionDelay: 5000,
-      modalVisible: false,
       tooSoonMessage: ""
     };
   },
   methods: {
-    btnTextChange() {
-      if (!this.gameStarted) {
-        this.startGame();
-      } else {
-        this.stopGame();
-      }
+    toggleGameState() {
+      this.gameStarted ? this.stopGame() : this.startGame();
     },
     startGame() {
       this.gameStarted = true;
       this.reactionTime = null;
-      this.readyToStop = false;
       this.startTime = null;
       this.tooSoonMessage = "";
 
       this.reactionTimer = setTimeout(() => {
-        this.readyToStop = true;
         this.startTime = Date.now();
-      }, this.reactionDelay);
+      }, 5000); 
     },
     stopGame() {
-      if (!this.readyToStop || !this.startTime) {
+      if (!this.startTime) {
         this.tooSoonMessage = "Too soon! Wait for the color to change.";
         this.reactionTime = null;
         this.gameStarted = false;
@@ -69,30 +64,23 @@ export default {
       }
 
       this.tooSoonMessage = "";
-      const endTime = Date.now();
-      const rawTime = endTime - this.startTime;
-
-      let seconds = Math.floor(rawTime / 1000);
-      let milliseconds = rawTime % 1000;
-
-      this.reactionTime = parseFloat(`${seconds}.${milliseconds.toString().padStart(3, '0')}`);
+      const rawTime = (Date.now() - this.startTime) / 1000;
+      this.reactionTime = rawTime.toFixed(3);
 
       this.gameStarted = false;
-      this.readyToStop = false;
-
+      this.startTime = null;
 
       if (this.highScore === null || this.reactionTime < this.highScore) {
         this.highScore = this.reactionTime;
       }
-
-      this.modalVisible = true;
     },
     closeModal() {
-      this.modalVisible = false;
+      this.reactionTime = null;
     }
   }
 };
 </script>
+
 
 <style>
 body {
@@ -110,7 +98,6 @@ h1 {
 }
 
 .canvas {
-  margin-left: 0;
   height: 100vh;
   width: 100vw;
   display: flex;
@@ -172,3 +159,4 @@ h1 {
   }
 }
 </style>
+
