@@ -4,10 +4,8 @@
             {{ gameStarted ? "Pay attention. Click stop when the color changes." : "Click Go to test your reaction time!" }}
         </span>
         <br>
-        <span v-if="reactionTime !== null">
-            Your reaction time was
-            <strong v-if="reactionTime === 'too soon'">Too soon</strong>
-            <strong v-else>{{ reactionTime }}s</strong>.
+        <span v-if="result">
+            {{ result }}
         </span>
         <span v-if="highScore" class="high-score">High Score: {{ highScore }}s</span>
     </div>
@@ -16,7 +14,7 @@
 <script>
 export default {
   name: 'GameResult',
-  props: ['gameStarted', 'reactionTime', 'highScore']
+  props: ['gameStarted', 'highScore', 'result']
 };
 </script>
 

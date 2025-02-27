@@ -2,7 +2,7 @@
     <div v-if="show" class="modal">
         <div class="modal-content">
             <h3>Reaction Time Result</h3>
-            <p>Your reaction time was <strong>{{ reactionTime }}s</strong></p>
+            {{ result }}
             <p v-if="highScore">
                 High Score: <strong>{{ highScore }}s</strong>
             </p>
@@ -16,7 +16,7 @@ export default {
   name: 'GameModal',
   props: {
     show: Boolean,
-    reactionTime: String,
+    result: String,
     highScore: String
   }
 };
