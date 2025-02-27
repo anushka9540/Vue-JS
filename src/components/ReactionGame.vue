@@ -80,6 +80,7 @@ export default {
       this.gameStarted = false;
       this.readyToStop = false;
 
+
       if (this.highScore === null || this.reactionTime < this.highScore) {
         this.highScore = this.reactionTime;
       }
