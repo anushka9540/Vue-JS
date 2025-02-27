@@ -4,9 +4,9 @@
     <GameButton :gameStarted="gameStarted" v-on:click="toggleGameState()" />
   
     <div class="result">
-      <GameResult :gameStarted="gameStarted" :reactionTime="lastReactionTime" :highScore="highScore || null" />
+      <GameResult :gameStarted="gameStarted" :reactionTime="reactionTime" :highScore="highScore || null" />
   
-      <div v-if="reactionTime !== null && reactionTime !== 'too soon'" class="modal">
+      <div v-if="showModal" class="modal">
         <div class="modal-content">
           <h3>Reaction Time Result</h3>
           <p>Your reaction time was <strong>{{ reactionTime }}s</strong></p>
@@ -34,7 +34,7 @@ export default {
       reactionTime: null,
       highScore: null,
       reactionTimer: null,
-      lastReactionTime: null
+      showModal: false
     };
   },
   methods: {
@@ -44,8 +44,8 @@ export default {
     startGame() {
       this.gameStarted = true;
       this.reactionTime = null;
-      this.lastReactionTime = null;
       this.startTime = null;
+      this.showModal = false;
       this.reactionTimer = setTimeout(() => {
         this.startTime = Date.now();
       }, 5000);
@@ -53,14 +53,13 @@ export default {
     stopGame() {
       if (!this.startTime) {
         this.reactionTime = "too soon";
-        this.lastReactionTime = "too soon";
         this.gameStarted = false;
         clearTimeout(this.reactionTimer);
         return;
       }
       const rawTime = (Date.now() - this.startTime) / 1000;
       this.reactionTime = rawTime.toFixed(3);
-      this.lastReactionTime = this.reactionTime;
+      this.showModal = true;
       this.gameStarted = false;
       this.startTime = null;
       if (this.highScore === null || parseFloat(this.reactionTime) < this.highScore) {
@@ -68,7 +67,7 @@ export default {
       }
     },
     closeModal() {
-      this.reactionTime = null;
+      this.showModal = false;
     }
   }
 };
