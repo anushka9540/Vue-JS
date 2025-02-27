@@ -1,21 +1,18 @@
 <template>
-   <div class="canvas" :class="{ 'active': startTime !== null }">
+  <div class="canvas" :class="{ 'active': startTime !== null }">
     <h1>Reaction Time Game</h1>
     <GameButton :gameStarted="gameStarted" v-on:click="toggleGameState()" />
   
     <div class="result">
-      <GameResult 
-        :gameStarted="gameStarted" 
-        :reactionTime="reactionTime || null"
-        :highScore="highScore || null" 
-        :tooSoonMessage="tooSoonMessage"
-      />
+      <GameResult :gameStarted="gameStarted" :reactionTime="lastReactionTime" :highScore="highScore || null" />
   
-      <div v-if="reactionTime" class="modal">
+      <div v-if="reactionTime !== null && reactionTime !== 'too soon'" class="modal">
         <div class="modal-content">
           <h3>Reaction Time Result</h3>
           <p>Your reaction time was <strong>{{ reactionTime }}s</strong></p>
-          <p v-if="highScore">High Score: <strong>{{ highScore }}s</strong></p>
+          <p v-if="highScore">
+            High Score: <strong>{{ highScore }}s</strong>
+          </p>
           <button v-on:click="closeModal">OK</button>
         </div>
       </div>
@@ -37,7 +34,7 @@ export default {
       reactionTime: null,
       highScore: null,
       reactionTimer: null,
-      tooSoonMessage: ""
+      lastReactionTime: null
     };
   },
   methods: {
@@ -47,30 +44,26 @@ export default {
     startGame() {
       this.gameStarted = true;
       this.reactionTime = null;
+      this.lastReactionTime = null;
       this.startTime = null;
-      this.tooSoonMessage = "";
-
       this.reactionTimer = setTimeout(() => {
         this.startTime = Date.now();
-      }, 5000); 
+      }, 5000);
     },
     stopGame() {
       if (!this.startTime) {
-        this.tooSoonMessage = "Too soon! Wait for the color to change.";
-        this.reactionTime = null;
+        this.reactionTime = "too soon";
+        this.lastReactionTime = "too soon";
         this.gameStarted = false;
         clearTimeout(this.reactionTimer);
         return;
       }
-
-      this.tooSoonMessage = "";
       const rawTime = (Date.now() - this.startTime) / 1000;
       this.reactionTime = rawTime.toFixed(3);
-
+      this.lastReactionTime = this.reactionTime;
       this.gameStarted = false;
       this.startTime = null;
-
-      if (this.highScore === null || this.reactionTime < this.highScore) {
+      if (this.highScore === null || parseFloat(this.reactionTime) < this.highScore) {
         this.highScore = this.reactionTime;
       }
     },
@@ -80,7 +73,6 @@ export default {
   }
 };
 </script>
-
 
 <style>
 body {
@@ -159,4 +151,3 @@ h1 {
   }
 }
 </style>
-

@@ -1,32 +1,20 @@
 <template>
-   <div>
+    <div>
         <span>
             {{ gameStarted ? "Pay attention. Click stop when the color changes." : "Click Go to test your reaction time!" }}
         </span>
         <br>
-        <span>{{ displayMessage }}</span>
-        <span v-if="showHighScore" class="high-score">High Score: {{ highScore }}s</span>
+        <span v-if="reactionTime !== null">
+            Your reaction time was <strong>{{ reactionTime === 'too soon' ? 'too soon' : `${reactionTime}s` }}</strong>.
+        </span>
+        <span v-if="highScore" class="high-score">High Score: {{ highScore }}s</span>
     </div>
 </template>
 
 <script>
 export default {
   name: 'GameResult',
-  props: ['gameStarted', 'reactionTime', 'highScore', 'tooSoonMessage'],
-  computed: {
-    displayMessage() {
-      if (this.tooSoonMessage) {
-        return this.tooSoonMessage;
-      }
-      if (this.reactionTime) {
-        return `Your reaction time was ${this.reactionTime}s.`;
-      }
-      return "";
-    },
-    showHighScore() {
-      return this.highScore && !this.tooSoonMessage;
-    }
-  }
+  props: ['gameStarted', 'reactionTime', 'highScore']
 };
 </script>
 
@@ -52,7 +40,3 @@ export default {
     font-weight: bold;
 }
 </style>
-
-
-
-
