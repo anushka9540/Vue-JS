@@ -6,26 +6,19 @@
     <div class="result">
       <GameResult :gameStarted="gameStarted" :reactionTime="reactionTime" :highScore="highScore || null" />
   
-      <div v-if="showModal" class="modal">
-        <div class="modal-content">
-          <h3>Reaction Time Result</h3>
-          <p>Your reaction time was <strong>{{ reactionTime }}s</strong></p>
-          <p v-if="highScore">
-            High Score: <strong>{{ highScore }}s</strong>
-          </p>
-          <button v-on:click="closeModal">OK</button>
-        </div>
-      </div>
+      <GameModal v-if="showModal" :show="showModal" :reactionTime="reactionTime" :highScore="highScore"
+        @close="closeModal" />
     </div>
   </div>
 </template>
 
 <script>
 import GameButton from './GameButton.vue';
+import GameModal from './GameModal.vue';
 import GameResult from "./GameResult.vue";
 
 export default {
-  components: { GameResult, GameButton },
+  components: { GameResult, GameButton, GameModal },
   name: "ReactionGame",
   data() {
     return {
@@ -73,6 +66,7 @@ export default {
 };
 </script>
 
+
 <style>
 body {
   background-color: skyblue;
@@ -100,36 +94,6 @@ h1 {
 
 .canvas.active {
   background-color: rgb(208, 97, 210);
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-}
-
-.modal-content button {
-  margin-top: 10px;
-  padding: 10px 20px;
-  border: none;
-  background: rgb(30, 196, 30);
-  color: white;
-  border-radius: 5px;
-  cursor: pointer;
 }
 
 .high-score {

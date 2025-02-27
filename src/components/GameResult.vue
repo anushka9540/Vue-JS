@@ -5,7 +5,9 @@
         </span>
         <br>
         <span v-if="reactionTime !== null">
-            Your reaction time was <strong>{{ reactionTime === 'too soon' ? 'too soon' : `${reactionTime}s` }}</strong>.
+            Your reaction time was
+            <strong v-if="reactionTime === 'too soon'">Too soon</strong>
+            <strong v-else>{{ reactionTime }}s</strong>.
         </span>
         <span v-if="highScore" class="high-score">High Score: {{ highScore }}s</span>
     </div>
@@ -40,20 +42,3 @@ export default {
     font-weight: bold;
 }
 </style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
