@@ -1,14 +1,32 @@
 <template>
-  <form class="form-container" @submit.prevent="submitForm" @keydown.enter.prevent>
+  <form
+    class="form-container"
+    @submit.prevent="submitForm"
+    @keydown.enter.prevent
+  >
     <label for="mail">EMAIL:</label>
-    <input type="text" v-model="email" name="mail" id="mail" class="input-field" placeholder="Enter email" />
+    <input
+      type="text"
+      v-model="email"
+      name="mail"
+      id="mail"
+      class="input-field"
+      placeholder="Enter email"
+    />
     <p v-if="emailError" class="error-text">{{ emailError }}</p>
-  
+
     <label for="pass">PASSWORD:</label>
-    <input type="password" v-model="password" name="pass" id="pass" class="input-field" maxlength="8"
-      placeholder="Enter password" />
+    <input
+      type="password"
+      v-model="password"
+      name="pass"
+      id="pass"
+      class="input-field"
+      maxlength="8"
+      placeholder="Enter password"
+    />
     <p v-if="passwordError" class="error-text">{{ passwordError }}</p>
-  
+
     <label for="role">ROLE:</label>
     <select v-model="role" name="role" id="role" class="input-field">
       <option value="">Select a role</option>
@@ -16,25 +34,35 @@
       <option value="Web Designer">Web Designer</option>
     </select>
     <p v-if="roleError" class="error-text">{{ roleError }}</p>
-  
+
     <label for="skill">SKILLS:</label>
-    <input type="text" v-model="newSkill" @keyup="handleKeyUp" placeholder="Enter or edit skills" class="input-field" />
-  
+    <input
+      type="text"
+      v-model="newSkill"
+      @keyup="handleKeyUp"
+      placeholder="Enter or edit skills"
+      class="input-field"
+    />
+
     <div class="skills-container">
       <span v-for="(skill, index) in skills" :key="index" class="skill-box">
         {{ skill }}
-        <button type="button" class="edit-btn" @click="editSkill(index)">✏️</button>
-        <button type="button" class="remove-btn" @click="removeSkill(index)">✖</button>
+        <button type="button" class="edit-btn" @click="editSkill(index)">
+          ✏️
+        </button>
+        <button type="button" class="remove-btn" @click="removeSkill(index)">
+          ✖
+        </button>
       </span>
     </div>
     <p v-if="skillsError" class="error-text">{{ skillsError }}</p>
-  
+
     <div class="checkbox-container">
       <input type="checkbox" v-model="terms" id="term" />
       <label for="term">ACCEPT TERMS AND CONDITIONS</label>
     </div>
     <p v-if="termsError" class="error-text check-box-error">{{ termsError }}</p>
-  
+
     <button type="submit" class="submit-button">Create an Account</button>
   </form>
 </template>
@@ -60,13 +88,12 @@ export default {
   },
   computed: {
     isPasswordValid() {
-      return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8}$/.test(this.password);
+      return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8}$/.test(
+        this.password
+      );
     }
   },
   watch: {
-
-
-
     email(value) {
       if (!value.trim()) {
         this.emailError = 'Email is required.';
@@ -80,7 +107,8 @@ export default {
       if (!value.trim()) {
         this.passwordError = 'Password is required.';
       } else if (!this.isPasswordValid) {
-        this.passwordError = 'Password must be 8 chars long, include 1 uppercase, 1 lowercase, 1 number, and 1 special character.';
+        this.passwordError =
+          'Password must be 8 chars long, include 1 uppercase, 1 lowercase, 1 number, and 1 special character.';
       } else {
         this.passwordError = '';
       }
@@ -89,7 +117,9 @@ export default {
       this.roleError = value ? '' : 'Please select a role.';
     },
     terms(value) {
-      this.termsError = value ? '' : 'You must accept the terms and conditions.';
+      this.termsError = value
+        ? ''
+        : 'You must accept the terms and conditions.';
     }
   },
   methods: {
@@ -108,8 +138,7 @@ export default {
         }
         event.preventDefault();
       }
-    }
-    ,
+    },
     editSkill(index) {
       this.newSkill = this.skills[index];
       this.skills.splice(index, 1);
@@ -118,7 +147,6 @@ export default {
     removeSkill(index) {
       this.skills.splice(index, 1);
     },
-
 
     validateForm() {
       if (!this.email.trim()) {
@@ -132,18 +160,27 @@ export default {
       if (!this.password.trim()) {
         this.passwordError = 'Password is required.';
       } else if (!this.isPasswordValid) {
-        this.passwordError = 'Password must be 8 chars long, include 1 uppercase, 1 lowercase, 1 number, and 1 special character.';
+        this.passwordError =
+          'Password must be 8 chars long, include 1 uppercase, 1 lowercase, 1 number, and 1 special character.';
       } else {
         this.passwordError = '';
       }
 
       this.roleError = this.role ? '' : 'Please select a role.';
-      this.skillsError = this.skills.length > 0 ? '' : 'Please enter at least one skill.';
-      this.termsError = this.terms ? '' : 'You must accept the terms and conditions.';
+      this.skillsError =
+        this.skills.length > 0 ? '' : 'Please enter at least one skill.';
+      this.termsError = this.terms
+        ? ''
+        : 'You must accept the terms and conditions.';
 
-      return !(this.emailError || this.passwordError || this.roleError || this.skillsError || this.termsError);
-    }
-    ,
+      return !(
+        this.emailError ||
+        this.passwordError ||
+        this.roleError ||
+        this.skillsError ||
+        this.termsError
+      );
+    },
     submitForm() {
       if (this.validateForm()) {
         console.log('Form submitted:', {
@@ -160,7 +197,7 @@ export default {
 };
 </script>
 
- <style scoped>
+<style scoped>
 .form-container {
   width: 400px;
   padding: 40px;
