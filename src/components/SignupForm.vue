@@ -1,11 +1,12 @@
 <template>
   <form class="form-container" @submit.prevent="submitForm" @keydown.enter.prevent>
     <label for="mail">EMAIL:</label>
-    <input type="text" v-model="email" name="mail" id="mail" class="input-field" />
+    <input type="text" v-model="email" name="mail" id="mail" class="input-field" placeholder="Enter email" />
     <p v-if="emailError" class="error-text">{{ emailError }}</p>
   
     <label for="pass">PASSWORD:</label>
-    <input type="password" v-model="password" name="pass" id="pass" class="input-field" maxlength="8" />
+    <input type="password" v-model="password" name="pass" id="pass" class="input-field" maxlength="8"
+      placeholder="Enter password" />
     <p v-if="passwordError" class="error-text">{{ passwordError }}</p>
   
     <label for="role">ROLE:</label>
@@ -62,23 +63,53 @@ export default {
       return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8}$/.test(this.password);
     }
   },
+  watch: {
+
+
+
+    email(value) {
+      if (!value.trim()) {
+        this.emailError = 'Email is required.';
+      } else if (!value.includes('@')) {
+        this.emailError = 'Please enter a valid email, including @';
+      } else {
+        this.emailError = '';
+      }
+    },
+    password(value) {
+      if (!value.trim()) {
+        this.passwordError = 'Password is required.';
+      } else if (!this.isPasswordValid) {
+        this.passwordError = 'Password must be 8 chars long, include 1 uppercase, 1 lowercase, 1 number, and 1 special character.';
+      } else {
+        this.passwordError = '';
+      }
+    },
+    role(value) {
+      this.roleError = value ? '' : 'Please select a role.';
+    },
+    terms(value) {
+      this.termsError = value ? '' : 'You must accept the terms and conditions.';
+    }
+  },
   methods: {
     handleKeyUp(event) {
       if (event.key === ',' || event.key === 'Enter') {
         this.newSkill = this.newSkill.replace(/,$/, '').trim();
         if (this.newSkill !== '') {
           if (this.editingIndex !== null) {
-            this.skills[this.editingIndex] = this.newSkill;
+            this.skills.splice(this.editingIndex, 1, this.newSkill);
             this.editingIndex = null;
           } else {
-
-            this.skills.push(this.newSkill);
+            this.skills = [...this.skills, this.newSkill];
           }
           this.newSkill = '';
+          this.skillsError = '';
         }
         event.preventDefault();
       }
-    },
+    }
+    ,
     editSkill(index) {
       this.newSkill = this.skills[index];
       this.skills.splice(index, 1);
@@ -87,15 +118,32 @@ export default {
     removeSkill(index) {
       this.skills.splice(index, 1);
     },
+
+
     validateForm() {
-      this.emailError = this.email.includes('@') ? '' : 'Invalid email format include @.';
-      this.passwordError = this.isPasswordValid ? '' : 'Password must be 8 chars long, include 1 uppercase, 1 lowercase, 1 number, and 1 special character.';
+      if (!this.email.trim()) {
+        this.emailError = 'Email is required.';
+      } else if (!this.email.includes('@')) {
+        this.emailError = 'Please enter a valid email.';
+      } else {
+        this.emailError = '';
+      }
+
+      if (!this.password.trim()) {
+        this.passwordError = 'Password is required.';
+      } else if (!this.isPasswordValid) {
+        this.passwordError = 'Password must be 8 chars long, include 1 uppercase, 1 lowercase, 1 number, and 1 special character.';
+      } else {
+        this.passwordError = '';
+      }
+
       this.roleError = this.role ? '' : 'Please select a role.';
       this.skillsError = this.skills.length > 0 ? '' : 'Please enter at least one skill.';
       this.termsError = this.terms ? '' : 'You must accept the terms and conditions.';
 
       return !(this.emailError || this.passwordError || this.roleError || this.skillsError || this.termsError);
-    },
+    }
+    ,
     submitForm() {
       if (this.validateForm()) {
         console.log('Form submitted:', {
@@ -112,41 +160,55 @@ export default {
 };
 </script>
 
-<style scoped>
+ <style scoped>
 .form-container {
-  width: 360px;
-  padding: 50px;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  width: 400px;
+  padding: 40px;
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   color: black;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 6px;
-  margin: auto;
+  gap: 8px;
 }
 
 label {
-  font-size: 11px;
-  font-weight: 800;
+  font-size: 12px;
+  font-weight: 700;
+  color: #374151;
 }
 
 .input-field {
+  width: 94%;
+  padding: 12px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #374151;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+#role {
   width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  background: #fff;
-  color: black;
-  border-bottom: 1px solid #ccc;
-  margin-top: 2px;
-  margin-bottom: 7px;
+}
+
+.input-field::placeholder {
+  color: #94a3b8;
+}
+
+.input-field:focus {
+  border-color: #007bff;
+  background: #f8fafc;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
 }
 
 .error-text {
   color: red;
-  font-size: 10px;
+  font-size: 11px;
   margin-top: -3px;
 }
 
@@ -158,31 +220,32 @@ label {
 }
 
 .skill-box {
-  background: #f3f4f6;
-  padding: 6px 12px;
-  border-radius: 20px;
+  background: #dbeafe;
+  padding: 6px 14px;
+  border-radius: 18px;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   display: flex;
   align-items: center;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-  transition: 0.2s;
+  color: #1e3a8a;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: 0.3s;
 }
 
 .skill-box:hover {
-  background: #e5e7eb;
+  background: #bfdbfe;
 }
 
 .edit-btn,
 .remove-btn {
   background: none;
   border: none;
-  font-size: 12px;
+  font-size: 14px;
   cursor: pointer;
-  transition: 0.2s;
+  transition: 0.3s;
   display: flex;
   align-items: center;
-  margin-left: 5px;
+  margin-left: 7px;
 }
 
 .edit-btn {
@@ -212,27 +275,30 @@ label {
 
 .submit-button {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   background: #007bff;
   color: white;
   border: none;
-  border-radius: 20px;
+  border-radius: 25px;
   cursor: pointer;
   font-size: 16px;
+  font-weight: 600;
+  transition: 0.3s;
 }
 
 .submit-button:hover {
   background: #0056b3;
+  transform: scale(1.03);
 }
 
 @media (max-width: 768px) {
   .form-container {
     width: 80%;
-    padding: 30px;
+    padding: 25px;
   }
 
   .input-field {
-    padding: 8px;
+    padding: 10px;
   }
 
   .submit-button {
