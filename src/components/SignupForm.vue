@@ -1,11 +1,14 @@
 <template>
-  <form class="form-container" @submit.prevent="submitForm">
+  <form class="form-container" @submit.prevent="submitForm" @keydown.enter.prevent>
     <label for="mail">EMAIL:</label>
     <input type="email" v-model="email" name="mail" id="mail" required class="input-field" />
   
     <label for="pass">PASSWORD:</label>
     <input type="password" v-model="password" name="pass" id="pass" required class="input-field" maxlength="8" />
-  
+    <p v-if="password && !isPasswordValid" class="error-text">
+      Password must be 8 chars long, include 1 uppercase, 1 lowercase, 1 number, and 1 special character.
+    </p>
+
     <label for="role">ROLE:</label>
     <select v-model="role" name="role" id="role" class="input-field" required>
       <option value="Web Developer">Web Developer</option>
@@ -51,6 +54,11 @@ export default {
       skills: [],
       terms: false
     };
+  },
+  computed: {
+    isPasswordValid() {
+      return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8}$/.test(this.password);
+    }
   },
   methods: {
     handleKeyUp(event) {
@@ -99,8 +107,8 @@ export default {
 }
 
 label {
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 800;
 }
 
 .input-field {
@@ -109,9 +117,14 @@ label {
   margin: 10px 0;
   border: none;
   border-radius: 5px;
-  background: transparent;
+  background: #fff;
   color: black;
   border-bottom: 1px solid #ccc;
+}
+
+.error-text {
+  color: red;
+  font-size: 10px;
 }
 
 .skills-container {
@@ -121,7 +134,7 @@ label {
   padding: 5px;
   border-radius: 5px;
   min-height: 40px;
-  margin-top: -6px;
+  margin-top: -14px;
   gap: 5px;
 }
 
