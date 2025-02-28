@@ -22,7 +22,7 @@
       name="pass"
       id="pass"
       class="input-field"
-      maxlength="8"
+      minlength="8"
       placeholder="Enter password"
     />
     <p v-if="passwordError" class="error-text">{{ passwordError }}</p>
@@ -40,10 +40,11 @@
       type="text"
       v-model="newSkill"
       @keyup="handleKeyUp"
+      @blur="validateSkillOnBlur"
       placeholder="Enter or edit skills"
       class="input-field"
     />
-
+    <p v-if="skillsError" class="error-text">{{ skillsError }}</p>
     <div class="skills-container">
       <span v-for="(skill, index) in skills" :key="index" class="skill-box">
         {{ skill }}
@@ -55,7 +56,6 @@
         </button>
       </span>
     </div>
-    <p v-if="skillsError" class="error-text">{{ skillsError }}</p>
 
     <div class="checkbox-container">
       <input type="checkbox" v-model="terms" id="term" />
@@ -88,38 +88,32 @@ export default {
   },
   computed: {
     isPasswordValid() {
-      return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8}$/.test(
+      return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
         this.password
       );
     }
   },
   watch: {
     email(value) {
-      if (!value.trim()) {
-        this.emailError = 'Email is required.';
-      } else if (!value.includes('@')) {
-        this.emailError = 'Please enter a valid email, including @';
-      } else {
-        this.emailError = '';
-      }
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      this.emailError = !value.trim()
+        ? 'Email is required.'
+        : !emailPattern.test(value)
+        ? 'Please enter a valid email.'
+        : '';
     },
     password(value) {
-      if (!value.trim()) {
-        this.passwordError = 'Password is required.';
-      } else if (!this.isPasswordValid) {
-        this.passwordError =
-          'Password must be 8 chars long, include 1 uppercase, 1 lowercase, 1 number, and 1 special character.';
-      } else {
-        this.passwordError = '';
-      }
+      this.passwordError = !value.trim()
+        ? 'Password is required.'
+        : !this.isPasswordValid
+        ? 'Password must be 8 chars long, include 1 uppercase, 1 lowercase, 1 number, and 1 special character.'
+        : '';
     },
     role(value) {
       this.roleError = value ? '' : 'Please select a role.';
     },
     terms(value) {
-      this.termsError = value
-        ? ''
-        : 'You must accept the terms and conditions.';
+      this.termsError = value ? '' : 'You must accept the terms and conditions.';
     }
   },
   methods: {
@@ -131,10 +125,12 @@ export default {
             this.skills.splice(this.editingIndex, 1, this.newSkill);
             this.editingIndex = null;
           } else {
-            this.skills = [...this.skills, this.newSkill];
+            this.skills.push(this.newSkill);
           }
           this.newSkill = '';
           this.skillsError = '';
+        } else if (this.editingIndex !== null) {
+          this.skillsError = 'Skill cannot be empty.';
         }
         event.preventDefault();
       }
@@ -146,32 +142,31 @@ export default {
     },
     removeSkill(index) {
       this.skills.splice(index, 1);
+      this.skillsError = this.skills.length > 0 ? '' : 'Please enter at least one skill.';
     },
-
+    validateSkillOnBlur() {
+      if (this.editingIndex !== null && this.newSkill.trim() === '') {
+        this.skillsError = 'Skill cannot be empty.';
+      }
+    },
     validateForm() {
-      if (!this.email.trim()) {
-        this.emailError = 'Email is required.';
-      } else if (!this.email.includes('@')) {
-        this.emailError = 'Please enter a valid email.';
-      } else {
-        this.emailError = '';
-      }
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      this.emailError = !this.email.trim()
+        ? 'Email is required.'
+        : !emailPattern.test(this.email)
+        ? 'Please enter a valid email.'
+        : '';
 
-      if (!this.password.trim()) {
-        this.passwordError = 'Password is required.';
-      } else if (!this.isPasswordValid) {
-        this.passwordError =
-          'Password must be 8 chars long, include 1 uppercase, 1 lowercase, 1 number, and 1 special character.';
-      } else {
-        this.passwordError = '';
-      }
-
+      this.passwordError = !this.password.trim()
+        ? 'Password is required.'
+        : !this.isPasswordValid
+        ? 'Password must be 8 chars long, include 1 uppercase, 1 lowercase, 1 number, and 1 special character.'
+        : '';
+      
       this.roleError = this.role ? '' : 'Please select a role.';
-      this.skillsError =
-        this.skills.length > 0 ? '' : 'Please enter at least one skill.';
-      this.termsError = this.terms
-        ? ''
-        : 'You must accept the terms and conditions.';
+
+      this.skillsError = this.skills.length > 0 ? '' : 'Please enter at least one skill.';
+      this.termsError = this.terms ? '' : 'You must accept the terms and conditions.';
 
       return !(
         this.emailError ||
@@ -220,7 +215,7 @@ label {
 .input-field {
   width: 94%;
   padding: 12px;
-  border-radius: 8px;
+  border-radius: 15px;
   background: #ffffff;
   border: 1px solid #cbd5e1;
   color: #374151;
@@ -247,6 +242,8 @@ label {
   color: red;
   font-size: 11px;
   margin-top: -3px;
+  width: 100%;
+  text-align: left;
 }
 
 .skills-container {
