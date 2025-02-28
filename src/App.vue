@@ -1,14 +1,18 @@
 <script>
-import ReactionGame from './components/ReactionGame.vue';
+import SignupForm from './components/SignupForm.vue'
+  export default{
+    name:'App',
+    components:{
+        SignupForm
 
-export default{
-  name:'App',
-  components:{
-    ReactionGame
+    }
   }
-}
 </script>
 
 <template>
-  <ReactionGame></ReactionGame>
+ <SignupForm></SignupForm>
 </template>
+
+<style>
+
+</style>
