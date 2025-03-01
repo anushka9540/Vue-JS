@@ -23,7 +23,9 @@
     <label for="skill">SKILLS:</label>
     <input type="text" v-model="formData.newSkill" @keyup.enter="handleSkill" @keyup="addSkillsOnComma"
       @input="validateSkill" @blur="validateSkill" placeholder="Enter or edit skills" class="input-field" />
-    <p v-if="formErrors.skills" class="error-text">{{ formErrors.skills }}</p>
+    <p v-if="formErrors.skills && skillsTouched" class="error-text">
+      {{ formErrors.skills }}
+    </p>
     <div class="skills-container">
       <span v-for="(skill, index) in formData.skills" :key="index" class="skill-box">
         {{ skill }}
@@ -68,6 +70,7 @@ export default {
         skills: '',
         terms: ''
       },
+      skillsTouched: false,
       editingIndex: null
     };
   },
@@ -109,13 +112,14 @@ export default {
       }
     },
     validateSkill() {
-      if (this.formData.newSkill.trim()) {
-        this.formErrors.skills = '';
-      } else if (this.editingIndex !== null || !this.formData.skills.length) {
-        this.formErrors.skills = 'Skill cannot be empty.';
-      }
+      this.skillsTouched = true;
+      this.formErrors.skills =
+        this.formData.skills.length > 0
+          ? ''
+          : 'Please enter at least one skill.';
     },
     handleSkill() {
+      this.skillsTouched = true;
       this.formData.newSkill = this.formData.newSkill.replace(/,$/, '').trim();
       if (this.formData.newSkill) {
         this.editingIndex !== null
@@ -127,9 +131,7 @@ export default {
           : this.formData.skills.push(this.formData.newSkill);
         this.formData.newSkill = '';
         this.editingIndex = null;
-        this.formErrors.skills = '';
-      } else if (this.editingIndex !== null) {
-        this.formErrors.skills = 'Skill cannot be empty.';
+        this.validateSkill();
       }
     },
     addSkillsOnComma(event) {
@@ -142,12 +144,11 @@ export default {
       this.formData.newSkill = this.formData.skills[index];
       this.formData.skills.splice(index, 1);
       this.editingIndex = index;
+      this.validateSkill();
     },
     removeSkill(index) {
       this.formData.skills.splice(index, 1);
-      this.formErrors.skills = this.formData.skills.length
-        ? ''
-        : 'Please enter at least one skill.';
+      this.validateSkill();
     },
     validateForm() {
       Object.keys(this.formData).forEach((field) => {
@@ -170,6 +171,7 @@ export default {
           skills: [],
           terms: false
         };
+        this.skillsTouched = false;
         Object.keys(this.formErrors).forEach(
           (key) => (this.formErrors[key] = '')
         );
