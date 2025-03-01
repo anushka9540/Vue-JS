@@ -1,27 +1,31 @@
 <template>
   <form class="form-container" @submit.prevent="submitForm" @keydown.enter.prevent>
     <label for="mail">EMAIL:</label>
-    <input type="text" v-model="email" id="mail" class="input-field" placeholder="Enter email" />
-    <p v-if="emailError" class="error-text">{{ emailError }}</p>
-
+    <input type="text" v-model="formData.email" id="mail" class="input-field" placeholder="Enter email"
+      @input="validateField('email')" />
+    <p v-if="formErrors.email" class="error-text">{{ formErrors.email }}</p>
+  
     <label for="pass">PASSWORD:</label>
-    <input type="password" v-model="password" id="pass" class="input-field" placeholder="Enter password" />
-    <p v-if="passwordError" class="error-text">{{ passwordError }}</p>
-
+    <input type="password" v-model="formData.password" id="pass" class="input-field" placeholder="Enter password"
+      @input="validateField('password')" />
+    <p v-if="formErrors.password" class="error-text">
+      {{ formErrors.password }}
+    </p>
+  
     <label for="role">ROLE:</label>
-    <select v-model="role" id="role" class="input-field">
+    <select v-model="formData.role" id="role" class="input-field" @change="validateField('role')">
       <option value="">Select a role</option>
       <option value="Web Developer">Web Developer</option>
       <option value="Web Designer">Web Designer</option>
     </select>
-    <p v-if="roleError" class="error-text">{{ roleError }}</p>
-
+    <p v-if="formErrors.role" class="error-text">{{ formErrors.role }}</p>
+  
     <label for="skill">SKILLS:</label>
-    <input type="text" v-model="newSkill" @keyup.enter="handleSkill" @blur="validateSkill"
+    <input type="text" v-model="formData.newSkill" @keyup.enter="handleSkill" @input="validateSkill" @blur="validateSkill"
       placeholder="Enter or edit skills" class="input-field" />
-    <p v-if="skillsError" class="error-text">{{ skillsError }}</p>
+    <p v-if="formErrors.skills" class="error-text">{{ formErrors.skills }}</p>
     <div class="skills-container">
-      <span v-for="(skill, index) in skills" :key="index" class="skill-box">
+      <span v-for="(skill, index) in formData.skills" :key="index" class="skill-box">
         {{ skill }}
         <button type="button" class="edit-btn" @click="editSkill(index)">
           ✏️
@@ -31,13 +35,15 @@
         </button>
       </span>
     </div>
-
+  
     <div class="checkbox-container">
-      <input type="checkbox" v-model="terms" id="term" />
+      <input type="checkbox" v-model="formData.terms" id="term" @change="validateField('terms')" />
       <label for="term">ACCEPT TERMS AND CONDITIONS</label>
     </div>
-    <p v-if="termsError" class="error-text check-box-error">{{ termsError }}</p>
-
+    <p v-if="formErrors.terms" class="error-text check-box-error">
+      {{ formErrors.terms }}
+    </p>
+  
     <button type="submit" class="submit-button">Create an Account</button>
   </form>
 </template>
@@ -47,127 +53,130 @@ export default {
   name: 'SignupForm',
   data() {
     return {
-      email: '',
-      password: '',
-      role: '',
-      newSkill: '',
-      skills: [],
-      editingIndex: null,
-      terms: false,
-      emailError: '',
-      passwordError: '',
-      roleError: '',
-      skillsError: '',
-      termsError: ''
+      formData: {
+        email: '',
+        password: '',
+        role: '',
+        newSkill: '',
+        skills: [],
+        terms: false
+      },
+      formErrors: {
+        email: '',
+        password: '',
+        role: '',
+        skills: '',
+        terms: ''
+      },
+      editingIndex: null
     };
   },
-  computed: {
-    isPasswordValid() {
-      return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
-        this.password
-      );
-    }
-  },
-  watch: {
-    email(value) {
-      this.emailError = !value.trim()
-        ? 'Email is required.'
-        : /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)
-          ? ''
-          : 'Please enter a valid email.';
-    },
-    password(value) {
-      this.passwordError = !value.trim()
-        ? 'Password is required.'
-        : this.isPasswordValid
-          ? ''
-          : 'Password must be 8 chars long, include 1 uppercase, 1 lowercase, 1 number, and 1 special character.';
-    },
-    role(value) {
-      this.roleError = value ? '' : 'Please select a role.';
-    },
-    terms(value) {
-      this.termsError = value
-        ? ''
-        : 'You must accept the terms and conditions.';
-    },
-    newSkill(value) {
-      this.skillsError =
-        value.trim() === '' &&
-          (this.editingIndex !== null || this.skills.length === 0)
-          ? 'Skill cannot be empty.'
-          : '';
-    }
-  },
   methods: {
+    checkPasswordValid() {
+      return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
+        this.formData.password
+      );
+    },
+    validateField(field) {
+      switch (field) {
+        case 'email':
+          this.formErrors.email = !this.formData.email.trim()
+            ? 'Email is required.'
+            : /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
+              this.formData.email
+            )
+              ? ''
+              : 'Please enter a valid email.';
+          break;
+        case 'password':
+          this.formErrors.password = !this.formData.password.trim()
+            ? 'Password is required.'
+            : this.checkPasswordValid()
+              ? ''
+              : 'Password must be 8 chars long, include 1 uppercase, 1 lowercase, 1 number, and 1 special character.';
+          break;
+        case 'role':
+          this.formErrors.role = this.formData.role
+            ? ''
+            : 'Please select a role.';
+          break;
+        case 'terms':
+          this.formErrors.terms = this.formData.terms
+            ? ''
+            : 'You must accept the terms and conditions.';
+          break;
+      }
+    },
+    validateSkill() {
+      if (this.formData.newSkill.trim()) {
+        this.formErrors.skills = '';
+      } else if (this.editingIndex !== null || !this.formData.skills.length) {
+        this.formErrors.skills = 'Skill cannot be empty.';
+      }
+    },
     handleSkill() {
-      this.newSkill = this.newSkill.replace(/,$/, '').trim();
-      if (this.newSkill) {
+      this.formData.newSkill = this.formData.newSkill.replace(/,$/, '').trim();
+      if (this.formData.newSkill) {
         this.editingIndex !== null
-          ? this.skills.splice(this.editingIndex, 1, this.newSkill)
-          : this.skills.push(this.newSkill);
-        this.newSkill = '';
+          ? this.formData.skills.splice(
+            this.editingIndex,
+            1,
+            this.formData.newSkill
+          )
+          : this.formData.skills.push(this.formData.newSkill);
+        this.formData.newSkill = '';
         this.editingIndex = null;
-        this.skillsError = '';
+        this.formErrors.skills = '';
       } else if (this.editingIndex !== null) {
-        this.skillsError = 'Skill cannot be empty.';
+        this.formErrors.skills = 'Skill cannot be empty.';
       }
     },
     editSkill(index) {
-      this.newSkill = this.skills[index];
-      this.skills.splice(index, 1);
+      this.formData.newSkill = this.formData.skills[index];
+      this.formData.skills.splice(index, 1);
       this.editingIndex = index;
     },
     removeSkill(index) {
-      this.skills.splice(index, 1);
-      this.skillsError = this.skills.length
+      this.formData.skills.splice(index, 1);
+      this.formErrors.skills = this.formData.skills.length
         ? ''
         : 'Please enter at least one skill.';
-    },
-    validateSkill() {
-      if (this.editingIndex !== null && this.newSkill.trim() === '') {
-        this.skillsError = 'Skill cannot be empty.';
-      }
     },
     validateForm() {
-      this.emailError = this.email.trim()
-        ? /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(this.email)
-          ? ''
-          : 'Please enter a valid email.'
-        : 'Email is required.';
-
-      this.passwordError = this.password.trim()
-        ? this.isPasswordValid
-          ? ''
-          : 'Password must be 8 chars long, include 1 uppercase, 1 lowercase, 1 number, and 1 special character.'
-        : 'Password is required.';
-
-      this.roleError = this.role ? '' : 'Please select a role.';
-      this.skillsError = this.skills.length
-        ? ''
-        : 'Please enter at least one skill.';
-      this.termsError = this.terms
-        ? ''
-        : 'You must accept the terms and conditions.';
-
+      this.validateField('email');
+      this.validateField('password');
+      this.validateField('role');
+      this.validateField('terms');
+      this.validateSkill();
       return !(
-        this.emailError ||
-        this.passwordError ||
-        this.roleError ||
-        this.skillsError ||
-        this.termsError
+        this.formErrors.email ||
+        this.formErrors.password ||
+        this.formErrors.role ||
+        this.formErrors.skills ||
+        this.formErrors.terms
       );
     },
     submitForm() {
       if (this.validateForm()) {
-        console.log('Form submitted:', {
-          email: this.email,
-          password: this.password,
-          role: this.role,
-          skills: this.skills,
-          terms: this.terms
-        });
+        console.log('Form submitted:', this.formData);
         alert('Form submitted successfully!');
+        this.formData = {
+          email: '',
+          password: '',
+          role: '',
+          newSkill: '',
+          skills: [],
+          terms: false
+        };
+        this.$nextTick(() => {
+          this.formErrors = {
+            email: '',
+            password: '',
+            role: '',
+            skills: '',
+            terms: ''
+          };
+        });
       }
     }
   }
