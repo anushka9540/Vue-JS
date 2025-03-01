@@ -1,5 +1,5 @@
 <template>
-  <form class="form-container" @submit.prevent="submitForm" @keydown.enter.prevent>
+  <form class="form-container" @submit.prevent="submitForm">
     <label for="mail">EMAIL:</label>
     <input type="text" v-model="formData.email" id="mail" class="input-field" placeholder="Enter email"
       @input="validateField('email')" />
