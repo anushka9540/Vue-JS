@@ -21,8 +21,8 @@
     <p v-if="formErrors.role" class="error-text">{{ formErrors.role }}</p>
   
     <label for="skill">SKILLS:</label>
-    <input type="text" v-model="formData.newSkill" @keyup.enter="handleSkill" @keyup="handleComma" @input="validateSkill"
-      @blur="validateSkill" placeholder="Enter or edit skills" class="input-field" />
+    <input type="text" v-model="formData.newSkill" @keyup.enter="handleSkill" @keyup="addSkillsOnComma"
+      @input="validateSkill" @blur="validateSkill" placeholder="Enter or edit skills" class="input-field" />
     <p v-if="formErrors.skills" class="error-text">{{ formErrors.skills }}</p>
     <div class="skills-container">
       <span v-for="(skill, index) in formData.skills" :key="index" class="skill-box">
@@ -131,7 +131,7 @@ export default {
         this.formErrors.skills = 'Skill cannot be empty.';
       }
     },
-    handleComma(event) {
+    addSkillsOnComma(event) {
       if (event.key === ',') {
         this.handleSkill();
         event.preventDefault();
@@ -149,18 +149,11 @@ export default {
         : 'Please enter at least one skill.';
     },
     validateForm() {
-      this.validateField('email');
-      this.validateField('password');
-      this.validateField('role');
-      this.validateField('terms');
-      this.validateSkill();
-      return !(
-        this.formErrors.email ||
-        this.formErrors.password ||
-        this.formErrors.role ||
-        this.formErrors.skills ||
-        this.formErrors.terms
+      ['email', 'password', 'role', 'terms'].forEach((field) =>
+        this.validateField(field)
       );
+      this.validateSkill();
+      return !Object.values(this.formErrors).some((error) => error);
     },
     submitForm() {
       if (this.validateForm()) {
@@ -174,15 +167,9 @@ export default {
           skills: [],
           terms: false
         };
-        this.$nextTick(() => {
-          this.formErrors = {
-            email: '',
-            password: '',
-            role: '',
-            skills: '',
-            terms: ''
-          };
-        });
+        Object.keys(this.formErrors).forEach(
+          (key) => (this.formErrors[key] = '')
+        );
       }
     }
   }
