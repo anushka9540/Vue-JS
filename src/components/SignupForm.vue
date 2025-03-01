@@ -21,8 +21,8 @@
     <p v-if="formErrors.role" class="error-text">{{ formErrors.role }}</p>
   
     <label for="skill">SKILLS:</label>
-    <input type="text" v-model="formData.newSkill" @keyup.enter="handleSkill" @input="validateSkill" @blur="validateSkill"
-      placeholder="Enter or edit skills" class="input-field" />
+    <input type="text" v-model="formData.newSkill" @keyup.enter="handleSkill" @keyup="handleComma" @input="validateSkill"
+      @blur="validateSkill" placeholder="Enter or edit skills" class="input-field" />
     <p v-if="formErrors.skills" class="error-text">{{ formErrors.skills }}</p>
     <div class="skills-container">
       <span v-for="(skill, index) in formData.skills" :key="index" class="skill-box">
@@ -129,6 +129,12 @@ export default {
         this.formErrors.skills = '';
       } else if (this.editingIndex !== null) {
         this.formErrors.skills = 'Skill cannot be empty.';
+      }
+    },
+    handleComma(event) {
+      if (event.key === ',') {
+        this.handleSkill();
+        event.preventDefault();
       }
     },
     editSkill(index) {
