@@ -77,6 +77,7 @@ export default {
         this.formData.password
       );
     },
+
     validateField(field) {
       switch (field) {
         case 'email':
@@ -149,9 +150,11 @@ export default {
         : 'Please enter at least one skill.';
     },
     validateForm() {
-      ['email', 'password', 'role', 'terms'].forEach((field) =>
-        this.validateField(field)
-      );
+      Object.keys(this.formData).forEach((field) => {
+        if (field in this.formErrors) {
+          this.validateField(field);
+        }
+      });
       this.validateSkill();
       return !Object.values(this.formErrors).some((error) => error);
     },
